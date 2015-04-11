@@ -57,7 +57,7 @@ function prepareRules(rules, macros, actions, tokens, startConditions, caseless)
             rules[i][1] = String(rules[i][1]).replace(/^\s*function \(\)\s?\{/, '').replace(/\}\s*$/, '');
         }
         action = rules[i][1];
-        if (tokens && action.match(/return '[^']+'/)) {
+        if (tokens && action.match(/return '[^']+'/) != null) {
             action = action.replace(/return '([^']+)'/g, tokenNumberReplacement);
         }
         actions.push('case ' + i + ':' + action + '\nbreak;');
@@ -176,7 +176,7 @@ RegExpLexer.prototype = {
         this.match += ch;
         this.matched += ch;
         var lines = ch.match(/(?:\r\n?|\n).*/g);
-        if (lines) {
+        if (lines != null) {
             this.yylineno++;
             this.yylloc.last_line++;
         } else {
@@ -307,7 +307,7 @@ RegExpLexer.prototype = {
         }
 
         lines = match[0].match(/(?:\r\n?|\n).*/g);
-        if (lines) {
+        if (lines != null) {
             this.yylineno += lines.length;
         }
         this.yylloc = {
@@ -365,7 +365,7 @@ RegExpLexer.prototype = {
         var rules = this._currentRules();
         for (var i = 0; i < rules.length; i++) {
             tempMatch = this._input.match(this.rules[rules[i]]);
-            if (tempMatch && (!match || tempMatch[0].length > match[0].length)) {
+            if (tempMatch != null && (match == null || tempMatch[0].length > match[0].length)) {
                 match = tempMatch;
                 index = i;
                 if (this.options.backtrack_lexer) {
@@ -384,7 +384,7 @@ RegExpLexer.prototype = {
                 }
             }
         }
-        if (match) {
+        if (match != null) {
             token = this.test_match(match, rules[index]);
             if (token !== false) {
                 return token;
